@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Owners</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="/bootstrap.min.css" media="screen"/>
+    <style>
+        .navigation-order{
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-7 col-sm-6">
+            <h1>List of owners</h1>
+
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>FullName</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:each="owner : ${owners}">
+                    <td th:ownerId="${owner.ownerId}"><a th:text="${owner.firstName + ' ' + owner.lastName}" th:href="@{'/owner/' + ${owner.ownerId}}"/></td>
+                    <td th:id="${owner.ownerId}"><button class="btn btn-default update-owner">Update owner</button></td>
+                    <td th:id="${owner.ownerId}"><button class="btn btn-danger delete-owner">Delete owner</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-6">
+        <form>
+            <div class="form-group">
+                <label for="first_name">FirstName:</label>
+                <input type="text" class="form-control" id="first_name"/>
+            </div>
+            <div class="form-group">
+                <label for="last_name">LastName:</label>
+                <input type="text" class="form-control" id="last_name"/>
+            </div>
+            <button type="submit" class="btn btn-default" id="btn_submit">Add New Owner</button>
+        </form>
+    </div>
+</div>
+<br/>
+
+<div th:replace="fragments/footer :: footer">...</div>
+
+<script src="/jquery.js" type="application/javascript"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+       $('#btn_submit').on("click",function (e) {
+           e.preventDefault();
+           var firstName, lastName;
+           firstName = $('#first_name').val();
+           lastName = $('#last_name').val();
+           if($.trim(firstName) === ""){
+               alert("FirstName cannot be empty");
+           }
+           else if($.trim(lastName) === ""){
+               alert("LastName cannot be empty");
+           }
+           else {
+               var data = {};
+               data["firstName"] = firstName;
+               data["lastName"] = lastName;
+               $.ajax({
+                   type: "POST",
+                   contentType: "application/json",
+                   url: "/saveowner",
+                   data: JSON.stringify(data),
+                   dataType: 'json',
+                   timeout: 6000,
+                   success: function (data) {
+                       if (confirm("Owner with Id " + data + " Saved")){
+                           window.location.reload();
+                       }
+                   }
+               });
+           }
+       });
+
+        $('.delete-owner').on("click", function(e){
+            e.preventDefault();
+
+            if(confirm("Are you sure that you want to delete this owner?")){
+                var Id = parseInt($(this).closest("td").attr("id"));
+                $.ajax({
+                    type:"POST",
+                    url:"/removeowner",
+                    data:{Id:Id},
+                    success:function (data) {
+                        $(".delete-owner").closest("td#"+data).parent("tr").fadeOut("slow",function(){
+                            $(".delete-owner").closest("td#"+data).parent("tr").remove();
+                        });
+                    }
+                });
+            }
+
+        });
+    });
+</script>
+</body>
+</html>
