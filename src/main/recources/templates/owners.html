@@ -26,7 +26,7 @@
                 <tbody>
 
                 <tr th:each="owner : ${owners}">
-                    <td th:ownerId="${owner.ownerId}"><a th:text="${owner.firstName + ' ' + owner.lastName}" th:href="@{'/owner/' + ${owner.ownerId}}"/></td>
+                    <td><a th:text="${owner.firstName + ' ' + owner.lastName}" th:href="@{'/owner/' + ${owner.ownerId}}"/></td>
                     <td th:id="${owner.ownerId}"><button class="btn btn-default update-owner">Update owner</button></td>
                     <td th:id="${owner.ownerId}"><button class="btn btn-danger delete-owner">Delete owner</button></td>
                 </tr>
@@ -72,10 +72,10 @@
                data["lastName"] = lastName;
                $.ajax({
                    type: "POST",
-                   contentType: "application/json",
+                   contentType: "application/json", //designates the content to be in JSON format
                    url: "/saveowner",
-                   data: JSON.stringify(data),
-                   dataType: 'json',
+                   data: JSON.stringify(data), //convert objects or array into string with format by JSON
+                   dataType: 'json', //only tells jQuery that you want it to parse the returned JSON
                    timeout: 6000,
                    success: function (data) {
                        if (confirm("Owner with Id " + data + " Saved")){
@@ -87,10 +87,10 @@
        });
 
         $('.delete-owner').on("click", function(e){
-            e.preventDefault();
+            e.preventDefault(); //If this method is called, the default action of the event will not be triggered.
 
             if(confirm("Are you sure that you want to delete this owner?")){
-                var Id = parseInt($(this).closest("td").attr("id"));
+                var Id = parseInt($(this).closest("td").attr("id")); // $(this) a jQuery wrapper-object around the element
                 $.ajax({
                     type:"POST",
                     url:"/removeowner",
@@ -99,6 +99,24 @@
                         $(".delete-owner").closest("td#"+data).parent("tr").fadeOut("slow",function(){
                             $(".delete-owner").closest("td#"+data).parent("tr").remove();
                         });
+                    }
+                });
+            }
+
+        });
+        $('.update-owner').on("click", function(e){
+            e.preventDefault();
+
+            if(confirm("Are you sure that you want to update this owner?")){
+                var Id = parseInt($(this).closest("td").attr("id"));
+                $.ajax({
+                    type:"POST",
+                    url:"/updateowner",
+                    data:{Id:Id},
+                    success:function (data) {
+                        if (confirm("Owner with Id " + data + " Updated")){
+                            window.location.reload();
+                        }
                     }
                 });
             }

@@ -27,7 +27,7 @@
                 <tbody>
                 <tr th:each="cat: ${owner.cats}">
                     <td th:text="${cat.name}"></td>
-                    <td><button class="btn btn-default update-cat">Update cat</button></td>
+                    <td th:id="${cat.catId}"><button class="btn btn-default update-cat">Update cat</button></td>
                     <td th:id="${cat.catId}"><button class="btn btn-danger delete-cat">Delete cat</button></td>
                 </tr>
                 </tbody>
@@ -62,8 +62,8 @@
             }
             else {
                 var data = {};
-                data["Name"] = catName;
-                data["OwnerId"] = [[${owner.ownerId}]];
+                data["name"] = catName;
+                data["ownerId"] = [[${owner.ownerId}]];
                 $.ajax({
                     type: "POST",
                     contentType: "application/json",
@@ -92,6 +92,24 @@
                         $(".delete-cat").closest("td#"+data).parent("tr").fadeOut("slow",function(){
                             $(".delete-cat").closest("td#"+data).parent("tr").remove();
                         });
+                    }
+                });
+            }
+
+        });
+        $('.update-cat').on("click", function(e){
+            e.preventDefault();
+
+            if(confirm("Are you sure that you want to update this cat?")){
+                var Id = parseInt($(this).closest("td").attr("id"));
+                $.ajax({
+                    type:"POST",
+                    url:"/updatecat",
+                    data:{Id:Id},
+                    success:function (data) {
+                        if (confirm("Cat with Id " + data + " Updated")){
+                            window.location.reload();
+                        }
                     }
                 });
             }

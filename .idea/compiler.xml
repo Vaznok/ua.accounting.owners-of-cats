@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="accounting owners of cats" />
+        <module name="springcoffeeshop" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="accounting owners of cats" target="1.8" />
+      <module name="springcoffeeshop" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -19,14 +19,23 @@ public class CatsController {
 
     @RequestMapping(value = "/savecat", method = RequestMethod.POST)
     @ResponseBody
-    public String saveProduct(@RequestBody CatWrapper wrapper) {
-        Cat cat = catsRepository.save(new Cat(wrapper.Name, ownersRepository.findOne(wrapper.OwnerId)));
+    public String saveCat(@RequestBody CatWrapper wrapper) {
+        Cat cat = catsRepository.save(new Cat(wrapper.name, ownersRepository.findOne(wrapper.ownerId)));
+        return cat.getCatId().toString();
+    }
+
+    @RequestMapping(value = "/updatecat", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateOwner(@RequestParam Long Id) {
+        Cat cat = catsRepository.findOne(Id);
+        cat.setName("Was Updated by Vetall");
+        catsRepository.save(cat);
         return cat.getCatId().toString();
     }
 
     @RequestMapping(value = "/removecat", method = RequestMethod.POST)
     @ResponseBody
-    public String removeOrder(@RequestParam Long Id){
+    public String removeCat(@RequestParam Long Id){
         catsRepository.delete(Id);
         return Id.toString();
     }
